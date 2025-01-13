@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minhas Memórias Disney</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --disney-blue: #0066cc;
+      --disney-gold: #ffd700;
+    }
+
+    body {
+      font-family: 'Chewy', cursive;
+      background: linear-gradient(135deg, #e6f3ff 0%, #fff 100%);
+      background: url('images/disney-background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      overflow: hidden; /* Impede o scroll na página inteira */
+    }
+
+    header {
+      background: linear-gradient(135deg, #a48ef0, #a3d1ff);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+    .header-content {
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .header h1 {
+      color: var(--disney-blue);
+      font-size: 3em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      animation: sparkle 1.5s infinite;
+      margin: 0;
+    }
+
+    .header p {
+      color: var(--disney-blue);
+      font-size: 1.2em;
+      margin: 0;
+      padding: 5px;
+    }
+
+    main {
+      position: fixed;
+      top: 120px; /* Altura do header */
+      bottom: 60px; /* Altura do footer */
+      left: 0;
+      right: 0;
+      overflow-y: auto; /* Permite scroll dentro do main */
+      padding: 20px;
+    }
+
+    .photo-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;   
+    }
+
+    .photo-frame {
+      position: relative;
+      aspect-ratio: 1;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .photo-frame:hover {
+      transform: scale(1.05);
+    }
+
+    .frame-border {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+
+    .upload-container {
+      position: sticky;
+      top: 20px; /* Distância do topo da tela, ajuste conforme necessário */
+      z-index: 10; /* Garante que o botão fique acima de outros elementos */
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+
+    .upload-btn {
+      background: linear-gradient(135deg, #a48ef0, #a3d1ff); 
+      color: #0052a3;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1em;
+      transition: all 0.3s ease;
+    }
+
+    .upload-btn:hover {
+      background-color: #0052a3;
+      transform: scale(1.05);
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-actions {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .photo-frame:hover .photo-actions {
+      opacity: 1;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: var(--disney-blue);
+      transition: transform 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .action-btn.delete {
+      color: #ff4444;
+    }
+
+    @keyframes sparkle {
+      0%, 100% {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.7);
+      }
+      50% {
+          text-shadow: 2px 2px 6px rgba(255, 215, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.8);
+      }
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background: linear-gradient(135deg, #a48ef0, #a3d1ff); 
+      color: var(--disney-blue);
+      text-align: center;
+      font-size: 1.2em;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      animation: sparkle 1.5s infinite;
+    }
+
+    footer i {
+     color: var(--disney-blue);
+    }
+
+    @media (max-width: 480px) {
+        .header h1 {
+          font-size: 2em;
+        }
+
+        .upload-btn {
+          font-size: 0.9em;
+          padding: 8px 18px;
+        }
+
+        .photo-gallery {
+          grid-template-columns: 1fr;
+        }
+
+        footer {
+          font-size: 0.9em;
+        }
+      }
+  </style>
+</head>
+
+<body>
+  <header>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-star"></i> Minhas Memórias Disney <i class="fas fa-star"></i></h1>
+
+      <p>Compartilhe suas fotos mágicas!</p>
+    </div>
+  </header>
+
+<main>
+    <div class="upload-container">
+      <input type="file" id="photoInput" accept="image/*" style="display: none;">
+      <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
+        Adicionar Foto Mágica
+      </button>
+    </div>
+
+    <div class="photo-gallery" id="photoGallery">
+      <!-- As fotos serão adicionadas aqui dinamicamente -->
+    </div>
+</main>
+
+  <footer>
+    <i class="fas fa-star"></i> Criado com amor para os fãs da Disney <i class="fas fa-star"></i>
+   </footer>
+
+  <script>
+    class DisneyPhotoGallery {
+      constructor() {
+        this.photoInput = document.getElementById('photoInput');
+        this.gallery = document.getElementById('photoGallery');
+        this.initializeEventListeners();
+      }
+
+      initializeEventListeners() {
+        this.photoInput.addEventListener('change', (e) => this.handlePhotoUpload(e));
+      }
+
+      handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => this.addPhotoToGallery(e.target.result);
+          reader.readAsDataURL(file);
+        }
+      }
+
+      createSocialButtons() {
+        return `
+          <div class="photo-actions">
+            <button class="action-btn delete" onclick="this.closest('.photo-frame').remove()">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+            <button class="action-btn" onclick="gallery.sharePhoto('facebook')">
+              <i class="fab fa-facebook"></i>
+            </button>
+            <button class="action-btn" onclick="gallery.sharePhoto('instagram')">
+              <i class="fab fa-instagram"></i>
+            </button>
+            <button class="action-btn" onclick="gallery.sharePhoto('whatsapp')">
+              <i class="fab fa-whatsapp"></i>
+            </button>
+          </div>
+        `;
+      }
+
+      sharePhoto(platform) {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent('Confira minha foto mágica da Disney! ✨');
+        
+        const shareUrls = {
+          facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+          instagram: `https://instagram.com`,
+          whatsapp: `https://api.whatsapp.com/send?text=${text} ${url}`
+        };
+
+        window.open(shareUrls[platform], '_blank');
+      }
+
+      addPhotoToGallery(imageUrl) {
+        const frameDiv = document.createElement('div');
+        frameDiv.className = 'photo-frame';
+        
+        const img = document.createElement('img');
+        img.className = 'preview-image';
+        img.src = imageUrl;
+        
+        frameDiv.appendChild(img);
+        frameDiv.innerHTML += this.createSocialButtons();
+        
+        this.gallery.appendChild(frameDiv);
+      }
+    }
+
+    // Inicializar a galeria
+    const gallery = new DisneyPhotoGallery();
+  </script>
+</body>
+</html>
