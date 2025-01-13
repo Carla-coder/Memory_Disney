@@ -178,7 +178,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 10px;
+      padding: 20px;
       background: linear-gradient(135deg, #a48ef0, #a3d1ff); 
       color: var(--disney-blue);
       text-align: center;
@@ -190,6 +190,26 @@
     footer i {
      color: var(--disney-blue);
     }
+
+    #audioButton {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #43f0d3;
+    color: #2b2b5f;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    font-weight: bolder;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+#audioButton:hover {
+    background-color: #ff4dff;
+    color: white;
+}
 
     @media (max-width: 480px) {
         .header h1 {
@@ -217,8 +237,8 @@
   <div class="container">
     <div class="header">
       <h1><i class="fas fa-star"></i> Minhas Memórias Disney <i class="fas fa-star"></i></h1>
-
       <p>Compartilhe suas fotos mágicas!</p>
+      </div>
     </div>
   </header>
 
@@ -235,80 +255,154 @@
     </div>
 </main>
 
-  <footer>
-    <i class="fas fa-star"></i> Criado com amor para os fãs da Disney <i class="fas fa-star"></i>
-   </footer>
+    <audio id="backgroundMusic" loop>
+      <source src="audio/01 When You Wish Upon a Star.mp3" type="audio/mp3">
+    </audio>
 
-  <script>
-    class DisneyPhotoGallery {
-      constructor() {
-        this.photoInput = document.getElementById('photoInput');
-        this.gallery = document.getElementById('photoGallery');
-        this.initializeEventListeners();
-      }
+    <footer>
+      <i class="fas fa-star"></i> Criado com amor de Carla coder para os fãs da Disney <i class="fas fa-star"></i>
+      <button id="audioButton">Play Music</button>
+    </footer>
 
-      initializeEventListeners() {
-        this.photoInput.addEventListener('change', (e) => this.handlePhotoUpload(e));
-      }
+ <script>
+  class DisneyPhotoGallery {
+    constructor() {
+      this.photoInput = document.getElementById('photoInput');
+      this.gallery = document.getElementById('photoGallery');
+      this.photosKey = 'disneyPhotos'; // Chave para salvar as fotos no localStorage
+      this.initializeEventListeners();
+      this.loadPhotosFromStorage();
+    }
 
-      handlePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => this.addPhotoToGallery(e.target.result);
-          reader.readAsDataURL(file);
-        }
-      }
+    initializeEventListeners() {
+      this.photoInput.addEventListener('change', (e) => this.handlePhotoUpload(e));
+    }
 
-      createSocialButtons() {
-        return `
-          <div class="photo-actions">
-            <button class="action-btn delete" onclick="this.closest('.photo-frame').remove()">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-            <button class="action-btn" onclick="gallery.sharePhoto('facebook')">
-              <i class="fab fa-facebook"></i>
-            </button>
-            <button class="action-btn" onclick="gallery.sharePhoto('instagram')">
-              <i class="fab fa-instagram"></i>
-            </button>
-            <button class="action-btn" onclick="gallery.sharePhoto('whatsapp')">
-              <i class="fab fa-whatsapp"></i>
-            </button>
-          </div>
-        `;
-      }
-
-      sharePhoto(platform) {
-        const url = encodeURIComponent(window.location.href);
-        const text = encodeURIComponent('Confira minha foto mágica da Disney! ✨');
-        
-        const shareUrls = {
-          facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-          instagram: `https://instagram.com`,
-          whatsapp: `https://api.whatsapp.com/send?text=${text} ${url}`
+    handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageUrl = e.target.result;
+          this.addPhotoToGallery(imageUrl);
+          this.savePhotoToStorage(imageUrl);
         };
-
-        window.open(shareUrls[platform], '_blank');
-      }
-
-      addPhotoToGallery(imageUrl) {
-        const frameDiv = document.createElement('div');
-        frameDiv.className = 'photo-frame';
-        
-        const img = document.createElement('img');
-        img.className = 'preview-image';
-        img.src = imageUrl;
-        
-        frameDiv.appendChild(img);
-        frameDiv.innerHTML += this.createSocialButtons();
-        
-        this.gallery.appendChild(frameDiv);
+        reader.readAsDataURL(file);
       }
     }
 
-    // Inicializar a galeria
-    const gallery = new DisneyPhotoGallery();
-  </script>
+    savePhotoToStorage(imageUrl) {
+      const photos = JSON.parse(localStorage.getItem(this.photosKey)) || [];
+      photos.push(imageUrl);
+      localStorage.setItem(this.photosKey, JSON.stringify(photos));
+    }
+
+    loadPhotosFromStorage() {
+      const photos = JSON.parse(localStorage.getItem(this.photosKey)) || [];
+      photos.forEach((photoUrl) => this.addPhotoToGallery(photoUrl));
+    }
+
+    deletePhoto(frameElement, imageUrl) {
+      frameElement.remove();
+      let photos = JSON.parse(localStorage.getItem(this.photosKey)) || [];
+      photos = photos.filter((url) => url !== imageUrl);
+      localStorage.setItem(this.photosKey, JSON.stringify(photos));
+    }
+
+    createSocialButtons(imageUrl) {
+      return `
+        <div class="photo-actions">
+          <button class="action-btn delete" onclick="gallery.deletePhoto(this.closest('.photo-frame'), '${imageUrl}')">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+          <button class="action-btn" onclick="gallery.sharePhoto('facebook')">
+            <i class="fab fa-facebook"></i>
+          </button>
+          <button class="action-btn" onclick="gallery.sharePhoto('whatsapp')">
+            <i class="fab fa-whatsapp"></i>
+          </button>
+        </div>
+      `;
+    }
+
+    sharePhoto(platform) {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent('Confira minha foto mágica da Disney! ✨');
+
+      const shareUrls = {
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+        instagram: `https://instagram.com`,
+        whatsapp: `https://api.whatsapp.com/send?text=${text} ${url}`,
+      };
+
+      window.open(shareUrls[platform], '_blank');
+    }
+
+    addPhotoToGallery(imageUrl) {
+  const frameDiv = document.createElement('div');
+  frameDiv.className = 'photo-frame';
+  frameDiv.draggable = true; // Torna o elemento arrastável
+
+  // Eventos de arrastar e soltar
+  frameDiv.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('text/plain', imageUrl); // Armazena a URL da imagem arrastada
+    frameDiv.classList.add('dragging');
+  });
+
+  frameDiv.addEventListener('dragend', () => {
+    frameDiv.classList.remove('dragging');
+    const reorderedPhotos = Array.from(this.gallery.querySelectorAll('.photo-frame img'))
+    .map((img) => img.src);
+  localStorage.setItem(this.photosKey, JSON.stringify(reorderedPhotos));
+});
+
+
+  frameDiv.addEventListener('dragover', (e) => {
+    e.preventDefault(); // Necessário para permitir o drop
+    const draggingElement = this.gallery.querySelector('.dragging');
+    const currentElement = e.target.closest('.photo-frame');
+    if (currentElement && draggingElement !== currentElement) {
+      const bounding = currentElement.getBoundingClientRect();
+      const offset = e.clientY - bounding.top + currentElement.clientHeight / 2;
+      if (offset < currentElement.clientHeight) {
+        this.gallery.insertBefore(draggingElement, currentElement);
+      } else {
+        this.gallery.insertBefore(draggingElement, currentElement.nextSibling);
+      }
+    }
+  });
+
+      const img = document.createElement('img');
+      img.className = 'preview-image';
+      img.src = imageUrl;
+
+      frameDiv.appendChild(img);
+      frameDiv.innerHTML += this.createSocialButtons(imageUrl);
+
+      this.gallery.appendChild(frameDiv);
+    }
+  }
+
+    // Adicionando o código para reproduzir o áudio
+    var audioButton = document.getElementById('audioButton');
+    var audio = document.getElementById('backgroundMusic');
+    var isAudioPlaying = false;
+
+    audioButton.addEventListener('click', function() {
+        if (isAudioPlaying) {
+            audio.pause();
+            isAudioPlaying = false;
+            audioButton.textContent = 'Play Music';
+        } else {
+            audio.play();
+            isAudioPlaying = true;
+            audioButton.textContent = 'Pause Music';
+        }
+    });
+
+  // Inicializar a galeria
+  const gallery = new DisneyPhotoGallery();
+</script>
+
 </body>
 </html>
