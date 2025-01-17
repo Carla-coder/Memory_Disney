@@ -16,6 +16,10 @@ Um aplicativo web interativo para capturar, organizar e compartilhar suas fotos 
 
 Este projeto utiliza tecnologias modernas para criar uma experiência mágica e intuitiva, perfeita para fãs da Disney.
 
+- Tela inicial:
+
+![tela inicial](https://github.com/user-attachments/assets/ec661416-e5ae-460e-a5f7-da900d6591fd)
+
 ### 💻 Tecnologias Utilizadas
 
 - **HTML5**: Estrutura da página.
